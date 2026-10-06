@@ -100,7 +100,7 @@ function ResultsSlider() {
 
       {/* العارض الرئيسي */}
       <div
-        className="relative mt-4 overflow-hidden rounded-[28px] bg-brand-950 shadow-lg"
+        className="relative mt-4 touch-pan-y select-none overflow-hidden rounded-[28px] bg-brand-950 shadow-lg"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onTouchStart={(e) => {
@@ -134,7 +134,7 @@ function ResultsSlider() {
         <span className="absolute right-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-extrabold tabular-nums text-white backdrop-blur-sm">
           <span dir="ltr">{index + 1} / {total}</span>
         </span>
-        <span className="absolute left-3 top-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+        <span className="absolute left-3 top-3 max-w-[45%] truncate rounded-full bg-black/55 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
           {cur.label}
         </span>
 
@@ -260,7 +260,7 @@ export default function Portfolio() {
 
       {/* التايم لاين */}
       <section className="relative mt-6 md:mt-8">
-        <div aria-hidden="true" className="absolute bottom-4 right-[27px] top-4 w-0.5 bg-gradient-to-b from-brand-300 via-brand-200 to-brand-100 md:right-[31px]" />
+        <div aria-hidden="true" className="absolute bottom-4 right-[27px] top-4 w-0.5 bg-gradient-to-b from-brand-300 via-brand-200 to-brand-100" />
 
         <div className="space-y-4 md:space-y-5">
           {/* 1 */}
@@ -268,7 +268,7 @@ export default function Portfolio() {
             <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-md">
               <Icon name="user" className="h-6 w-6" />
             </span>
-            <div className="flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="min-w-0 flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
               <span className="text-[11px] font-extrabold text-brand-500">01 • البداية</span>
               <h2 className="mt-1 text-base font-extrabold text-brand-900 md:text-lg">التقييم قبل الخطة</h2>
               <p className="mt-2 text-[13px] font-semibold leading-relaxed text-gray-600 md:text-sm">
@@ -284,7 +284,7 @@ export default function Portfolio() {
             <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-md">
               <Icon name="target" className="h-6 w-6" />
             </span>
-            <div className="flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="min-w-0 flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
               <span className="text-[11px] font-extrabold text-brand-500">02 • مع العملاء</span>
               <h2 className="mt-1 text-base font-extrabold text-brand-900 md:text-lg">نتائج حقيقية قابلة للاستمرار</h2>
               <p className="mt-2 text-[13px] font-semibold leading-relaxed text-gray-600 md:text-sm">
@@ -300,7 +300,7 @@ export default function Portfolio() {
             <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-md">
               <Icon name="chart" className="h-6 w-6" />
             </span>
-            <div className="flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="min-w-0 flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
               <span className="text-[11px] font-extrabold text-brand-500">03 • الفلسفة</span>
               <h2 className="mt-1 text-base font-extrabold text-brand-900 md:text-lg">نتائج تتجاوز الميزان</h2>
               <p className="mt-2 text-[13px] font-semibold leading-relaxed text-gray-600 md:text-sm">
@@ -331,7 +331,7 @@ export default function Portfolio() {
             <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-md">
               <Icon name="flame" className="h-6 w-6" />
             </span>
-            <div className="flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
+            <div className="min-w-0 flex-1 rounded-3xl border border-brand-100 bg-white p-4 shadow-sm md:p-5">
               <span className="text-[11px] font-extrabold text-brand-500">04 • المنهج</span>
               <h2 className="mt-1 text-base font-extrabold text-brand-900 md:text-lg">منهجي في التغذية</h2>
               <p className="mt-2 text-[13px] font-extrabold leading-relaxed text-brand-800 md:text-sm">
@@ -353,7 +353,7 @@ export default function Portfolio() {
             <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-400 text-white shadow-md">
               <Icon name="sparkles" className="h-6 w-6" />
             </span>
-            <blockquote className="flex-1 rounded-3xl bg-brand-900 p-4 text-white shadow-md md:p-5">
+            <blockquote className="min-w-0 flex-1 rounded-3xl bg-brand-900 p-4 text-white shadow-md md:p-5">
               <p className="text-sm font-extrabold leading-relaxed md:text-base">
                 "التغيير الحقيقي لا يبدأ من قائمة الممنوعات، بل من فهم أفضل لجسمك وعاداتك وطريقة
                 تعاملك مع الطعام."
