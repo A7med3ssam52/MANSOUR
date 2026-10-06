@@ -8,6 +8,7 @@ import Results from './components/Results'
 import MansourAI from './components/MansourAI'
 import BottomNav from './components/BottomNav'
 import ProgressSteps from './components/ProgressSteps'
+import Portfolio from './components/Portfolio'
 import Footer from './components/Footer'
 import Icon from './components/icons'
 import { clearAll, getLead, getResult } from './services/leads'
@@ -193,10 +194,7 @@ export default function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/portfolio"
-            element={<Soon title="البورتفوليو" desc="صفحة أعمال وقصص نجاح محمد منصور هتتضاف هنا في المرحلة الجاية." />}
-          />
+          <Route path="/portfolio" element={<Portfolio />} />
           <Route
             path="/follow-up"
             element={<Soon title="نظام المتابعة" desc="نظام المتابعة الأسبوعية والاشتراكات هيشتغل هنا قريباً." />}

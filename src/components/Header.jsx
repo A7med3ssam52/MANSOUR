@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import LogoMark from './Logo'
 
 export default function Header() {
   const { pathname } = useLocation()
@@ -17,9 +18,7 @@ export default function Header() {
     <header className="sticky top-0 z-40 border-b border-brand-100 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-md items-center justify-between gap-2 px-4 py-2.5 md:max-w-6xl md:px-6 md:py-3">
         <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-600 text-lg font-extrabold text-white md:h-11 md:w-11 md:text-xl">
-            م
-          </span>
+          <LogoMark className="h-9 w-9 text-brand-700 md:h-11 md:w-11" />
           <span>
             <span className="block text-base font-extrabold leading-tight text-brand-900 md:text-lg">
               محمد منصور

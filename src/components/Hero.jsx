@@ -52,7 +52,7 @@ export default function Hero({ onStart }) {
       <div className="full-screen relative z-10 flex flex-col justify-center px-5 pb-28 pt-7 md:mx-auto md:grid md:min-h-0 md:max-w-6xl md:grid-cols-2 md:items-center md:gap-10 md:px-8 md:py-16">
         <div>
           <span className="inline-block rounded-full bg-white/15 px-3 py-1 text-xs font-bold md:text-sm">
-            محمد منصور • أخصائي تغذية
+            ابدأ النهاردة… جسمك يستاهل 💪
           </span>
           <h1 className="mt-3 text-[28px] font-extrabold leading-[1.35] drop-shadow-lg md:text-5xl md:leading-[1.3]">
             احسب سعراتك بدقة
@@ -73,7 +73,7 @@ export default function Hero({ onStart }) {
             {[
               ['3', 'معادلات عالمية'],
               ['3', 'أهداف مبسطة'],
-              ['AI', 'توزيع وجبات'],
+              ['بوت', 'توزيع وجبات'],
             ].map(([n, l]) => (
               <div key={l} className="rounded-2xl bg-white/10 p-2.5">
                 <div className="text-xl font-extrabold">{n}</div>

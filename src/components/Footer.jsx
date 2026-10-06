@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Icon from './icons'
+import LogoMark from './Logo'
 
 export default function Footer() {
   return (
@@ -15,9 +16,7 @@ export default function Footer() {
       <div className="relative mx-auto max-w-md px-5 py-8 md:max-w-6xl md:px-8 md:py-10">
         <div className="flex flex-col items-center gap-5 text-center md:flex-row md:items-center md:justify-between md:text-right">
           <Link to="/" className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-xl font-extrabold text-brand-800 shadow-lg">
-              م
-            </span>
+            <LogoMark className="h-11 w-11 text-white" />
             <span>
               <span className="block text-base font-extrabold leading-tight md:text-lg">
                 محمد منصور
