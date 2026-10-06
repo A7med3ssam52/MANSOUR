@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* طول الشاشة الكاملة مع دعم المتصفحات القديمة (vh أولاً ثم dvh) */
+.full-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  font-family: 'Cairo', 'Tajawal', system-ui, sans-serif;
+  background-color: #f7fdf8;
+}
+
+/* منع زوم iOS التلقائي عند التركيز على الحقول */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: #86efac;
+  border-radius: 999px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ===== خلفية التغذية الداكنة — أشكال عائمة متحركة ===== */
+@keyframes nutrition-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg) scale(1);
+  }
+  50% {
+    transform: translateY(-22px) rotate(8deg) scale(1.08);
+  }
+}
+
+@keyframes nutrition-drift {
+  0%,
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateX(14px) translateY(-16px) rotate(10deg);
+  }
+  66% {
+    transform: translateX(-12px) translateY(10px) rotate(-8deg);
+  }
+}
+
+@keyframes nutrition-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.15);
+  }
+}
+
+.nutrition-float {
+  animation: nutrition-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+.nutrition-drift {
+  animation: nutrition-drift 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.nutrition-glow {
+  animation: nutrition-glow 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nutrition-float,
+  .nutrition-drift,
+  .nutrition-glow {
+    animation: none;
+  }
+}
+
+/* نقاط الكتابة المتحركة داخل فقاعة الـ AI */
+@keyframes typing-blink {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.typing-dots {
+  display: inline-flex;
+  gap: 5px;
+  padding: 6px 2px;
+}
+.typing-dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: typing-blink 1.1s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* مؤشر نبض في آخر النص أثناء الكتابة التدريجية */
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.typing-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-inline-start: 3px;
+  background: #16a34a;
+  vertical-align: -2px;
+  animation: caret-blink 0.9s steps(1) infinite;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
