@@ -1,4 +1,18 @@
-# React + Vite
+# محمد منصور — حاسبة السعرات + منصور بوت
+
+## متغيرات البيئة (مطلوبة في Production مثل Vercel)
+
+بدون `VITE_GEMINI_API_KEY` الشات بيشتغل بالردود المحلية البديلة. أضف في
+Vercel → Settings → Environment Variables:
+
+```
+VITE_GEMINI_API_KEY=...        # مفتاح Gemini (لازم للردود الذكية)
+VITE_GEMINI_MODEL=gemini-2.0-flash
+VITE_SUPABASE_URL=...          # لحفظ الليدز
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+```
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
