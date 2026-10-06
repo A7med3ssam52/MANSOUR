@@ -9,6 +9,7 @@ import MansourAI from './components/MansourAI'
 import BottomNav from './components/BottomNav'
 import ProgressSteps from './components/ProgressSteps'
 import Portfolio from './components/Portfolio'
+import Leads from './components/Leads'
 import Footer from './components/Footer'
 import Icon from './components/icons'
 import { clearAll, getLead, getResult } from './services/leads'
@@ -195,6 +196,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/labs/users/leads" element={<Leads />} />
           <Route
             path="/follow-up"
             element={<Soon title="نظام المتابعة" desc="نظام المتابعة الأسبوعية والاشتراكات هيشتغل هنا قريباً." />}
