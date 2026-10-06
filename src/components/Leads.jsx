@@ -153,6 +153,24 @@ export default function Leads() {
     load()
   }, [authed])
 
+  // أحدث صف لكل رقم تليفون (عشان الصفوف القديمة المكررة قبل الإصلاح)
+  const people = useMemo(() => {
+    const seen = new Map()
+    for (const r of rows) {
+      if (!r.phone || seen.has(r.phone)) continue
+      seen.set(r.phone, r)
+    }
+    return [...seen.values()]
+  }, [rows])
+
+  const filtered = useMemo(() => {
+    const q = query.trim()
+    if (!q) return people
+    return people.filter(
+      (p) => (p.name ?? '').includes(q) || String(p.phone ?? '').includes(q.replace(/[\s-]/g, '')),
+    )
+  }, [people, query])
+
   if (!authed) {
     return (
       <main className="mx-auto max-w-md px-4 py-16 text-center">
@@ -191,24 +209,6 @@ export default function Leads() {
       </main>
     )
   }
-
-  // أحدث صف لكل رقم تليفون (عشان الصفوف القديمة المكررة قبل الإصلاح)
-  const people = useMemo(() => {
-    const seen = new Map()
-    for (const r of rows) {
-      if (!r.phone || seen.has(r.phone)) continue
-      seen.set(r.phone, r)
-    }
-    return [...seen.values()]
-  }, [rows])
-
-  const filtered = useMemo(() => {
-    const q = query.trim()
-    if (!q) return people
-    return people.filter(
-      (p) => (p.name ?? '').includes(q) || String(p.phone ?? '').includes(q.replace(/[\s-]/g, '')),
-    )
-  }, [people, query])
 
   return (
     <main className="mx-auto max-w-md px-4 py-6 md:max-w-4xl md:px-8 md:py-10">
