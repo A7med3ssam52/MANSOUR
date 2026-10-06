@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom'
 import Icon from './icons'
 import { isCloudEnabled, supabase } from '../services/supabaseClient'
 
+// بصمة SHA-256 لكلمة سر المنطقة الخاصة (الباسورد نفسه مش محفوظ في الكود)
+const PASS_HASH = 'da36c3fe403e17e1ee675095bfa660636efd0ed1c02c77fc6feb890fcd4bb3cf'
+
+async function checkPassword(pw) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw))
+  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('') === PASS_HASH
+}
+
 function maskPhone(phone) {
   const p = String(phone ?? '')
   if (p.length < 7) return p
@@ -88,8 +96,41 @@ export default function Leads() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
+  const [authed, setAuthed] = useState(() => {
+    try {
+      return sessionStorage.getItem('mm_leads_auth') === '1'
+    } catch {
+      return false
+    }
+  })
+  const [pw, setPw] = useState('')
+  const [pwError, setPwError] = useState('')
+  const [checking, setChecking] = useState(false)
+
+  async function unlock(e) {
+    e?.preventDefault()
+    if (checking) return
+    setChecking(true)
+    try {
+      if (await checkPassword(pw)) {
+        try {
+          sessionStorage.setItem('mm_leads_auth', '1')
+        } catch {
+          // التخزين المحلي غير متاح — الدخول للجلسة الحالية فقط
+        }
+        setAuthed(true)
+      } else {
+        setPwError('الباسورد غلط، حاول تاني')
+      }
+    } catch {
+      setPwError('المتصفح ده مش مدعوم، جرّب متصفح تاني')
+    } finally {
+      setChecking(false)
+    }
+  }
 
   useEffect(() => {
+    if (!authed) return
     async function load() {
       if (!isCloudEnabled || !supabase) {
         setError('الاتصال السحابي غير مفعّل')
@@ -110,7 +151,46 @@ export default function Leads() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [authed])
+
+  if (!authed) {
+    return (
+      <main className="mx-auto max-w-md px-4 py-16 text-center">
+        <div className="rounded-[28px] border border-brand-100 bg-white p-6 shadow-sm">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 text-brand-700">
+            <Icon name="lock" className="h-7 w-7" />
+          </span>
+          <h1 className="mt-3 text-xl font-extrabold text-brand-900">منطقة خاصة</h1>
+          <p className="mt-1 text-[13px] font-semibold text-gray-500">صفحة المسجلين محمية بكلمة سر</p>
+          <form onSubmit={unlock} className="mt-4 grid gap-3">
+            <input
+              type="password"
+              value={pw}
+              onChange={(e) => {
+                setPw(e.target.value)
+                setPwError('')
+              }}
+              placeholder="كلمة السر"
+              autoComplete="current-password"
+              dir="ltr"
+              className="min-h-[54px] w-full rounded-2xl border border-brand-200 px-4 text-left text-base font-semibold outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+            />
+            {pwError && (
+              <p className="rounded-2xl bg-red-50 p-3 text-[13px] font-bold text-red-700">{pwError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={checking || !pw}
+              className="flex min-h-[54px] w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 text-base font-extrabold text-white shadow active:scale-[0.99] disabled:opacity-60"
+            >
+              <Icon name="check" className="h-5 w-5" />
+              {checking ? 'ثواني...' : 'دخول'}
+            </button>
+          </form>
+        </div>
+      </main>
+    )
+  }
 
   // أحدث صف لكل رقم تليفون (عشان الصفوف القديمة المكررة قبل الإصلاح)
   const people = useMemo(() => {
