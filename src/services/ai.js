@@ -29,14 +29,28 @@ const MEAL_PLANS = {
 }
 
 export function distributeMeals(targetCalories, macros, mealCount = 3) {
-  const plan = MEAL_PLANS[mealCount] ?? MEAL_PLANS[4]
-  return plan.map((m) => ({
+  const plan = MEAL_PLANS[mealCount] ?? MEAL_PLANS[3]
+  const pcts = plan.map((m) => m.pct)
+  return plan.map((m, i) => ({
     name: m.name,
-    calories: Math.round(targetCalories * m.pct),
-    proteinG: Math.round(macros.proteinG * m.pct),
-    carbsG: Math.round(macros.carbsG * m.pct),
-    fatG: Math.round(macros.fatG * m.pct),
+    calories: splitExact(targetCalories, pcts)[i],
+    proteinG: splitExact(macros.proteinG, pcts)[i],
+    carbsG: splitExact(macros.carbsG, pcts)[i],
+    fatG: splitExact(macros.fatG, pcts)[i],
   }))
+}
+
+// توزيع عدد صحيح على نسب — المجموع يساوي الأصل دائماً (largest remainder)
+function splitExact(total, pcts) {
+  const t = Math.round(total)
+  const floors = pcts.map((p) => Math.floor(t * p))
+  let rest = t - floors.reduce((a, b) => a + b, 0)
+  const order = pcts
+    .map((p, i) => ({ i, frac: t * p - floors[i] }))
+    .sort((a, b) => b.frac - a.frac)
+  const out = [...floors]
+  for (let k = 0; k < order.length && rest > 0; k++, rest--) out[order[k].i] += 1
+  return out
 }
 
 // نص الرسالة الافتتاحية اللي بتظهر للعميل كفقاعة مرسلة قبل رد البوت
@@ -181,13 +195,19 @@ function mockFirstReply(lead, result, mealCount) {
   const lines = meals.map(
     (m) => `• ${m.name}: ${m.calories} سعرة (بروتين ${m.proteinG}جم، كارب ${m.carbsG}جم، دهون ${m.fatG}جم)`,
   )
+  const example =
+    result.goalId === 'bulk'
+      ? 'مثال ليوم زيادة مصري: فطار (بيض + فول + عيش بلدي + لبن)، غداء (رز بزيادة + فراخ + سلطة)، سناك (شوفان + موز + سوداني)، عشاء (تونة + عيش + خضار).'
+      : result.goalId === 'maintain'
+        ? 'مثال ليوم ثبات مصري: فطار (فول + بيض + عيش بلدي)، غداء (رز + فراخ + سلطة)، سناك (زبادي + ثمرة فاكهة)، عشاء (جبنة قريش + خضار).'
+        : 'مثال ليوم تنشيف مصري: فطار (بيض + فول + عيش بلدي)، غداء (رز + فراخ/تونة + سلطة)، سناك (زبادي + ثمرة فاكهة)، عشاء (جبنة قريش + خضار).'
   return [
     `أهلاً ${lead?.name ?? 'يا بطل'}! حسب هدفك (${result.goalLabel}) سعراتك المستهدفة ${result.targetCalories} سعرة.`,
     '',
     'توزيعة مقترحة:',
     ...lines,
     '',
-    'مثال ليوم تنشيف مصري: فطار (بيض + فول + عيش بلدي)، غداء (رز + فراخ/تونة + سلطة)، سناك (زبادي + ثمرة فاكهة)، عشاء (جبنة قريش + خضار).',
+    example,
     'اسألني: بدّل وجبة، أو قلل التكلفة، أو اعملها بدون بيض/لبن.',
   ].join('\n')
 }

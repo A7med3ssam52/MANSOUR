@@ -28,6 +28,11 @@ export default function Results({ result, onDistribute }) {
         <div className="text-[13px] font-bold text-white/85">{result.goalLabel}</div>
         <div className="mt-1 text-5xl font-extrabold tabular-nums">{result.targetCalories}</div>
         <div className="text-[13px] font-bold">سعرة / يوم</div>
+        {result.targetCapped && (
+          <div className="mx-auto mt-2 max-w-xs rounded-xl bg-white/15 px-3 py-1.5 text-[11px] font-bold text-white">
+            اترفع للحد الأدنى الآمن ({result.targetFloor} سعرة) — العجز الكامل كان هينزل تحت معدل الراحة
+          </div>
+        )}
       </div>
       <div className="mt-2 grid grid-cols-3 gap-2">
         {[

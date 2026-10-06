@@ -24,9 +24,9 @@ export function harrisBenedict({ weightKg, heightCm, age, gender }) {
   return 447.593 + 9.247 * weightKg + 3.098 * heightCm - 4.33 * age
 }
 
-// تحتاج نسبة دهون صحيحة (0-60). ترجع null لو غير متاحة
+// تحتاج نسبة دهون صحيحة (0-60]. ترجع null لو غير متاحة
 export function katchMcArdle({ weightKg, bodyFatPct }) {
-  if (bodyFatPct == null || Number.isNaN(bodyFatPct) || bodyFatPct <= 0 || bodyFatPct >= 60) {
+  if (bodyFatPct == null || Number.isNaN(bodyFatPct) || bodyFatPct <= 0 || bodyFatPct > 60) {
     return null
   }
   const leanMass = weightKg * (1 - bodyFatPct / 100)
@@ -42,14 +42,54 @@ export function targetCalories(tdee, goalId) {
   return Math.round(tdee + goal.delta)
 }
 
-// بروتين حسب الهدف + دهون 27% من السعرات + الباقي كارب
+// حد أدنى آمن للتنشيف: الهدف لا ينزل تحت BMR ولا تحت 1200 سعرة.
+// ترجع { target, capped } حتى نوضح للمستخدم أن الرقم اترفع للأمان.
+export function safeTargetCalories(tdeePrecise, goalId, bmrPrecise) {
+  const raw = targetCalories(tdeePrecise, goalId)
+  if (goalId !== 'cut') return { target: raw, capped: false, floor: null }
+  const floor = Math.max(1200, Math.round(bmrPrecise))
+  if (raw < floor) return { target: floor, capped: true, floor }
+  return { target: raw, capped: false, floor: null }
+}
+
+// بروتين حسب الهدف + دهون 27% من السعرات + الباقي كارب.
+// مضمونة: proteinG*4 + carbsG*4 + fatG*9 === calories دائماً (عندما يكون ذلك ممكناً رياضياً).
 export function calcMacros(calories, weightKg, goalId) {
+  const target = Math.round(calories)
   const proteinPerKg = goalId === 'cut' ? 2.2 : goalId === 'bulk' ? 2.0 : 1.8
   const proteinG = Math.round(proteinPerKg * weightKg)
-  const fatCal = calories * 0.27
-  const fatG = Math.round(fatCal / 9)
-  const carbsG = Math.max(0, Math.round((calories - proteinG * 4 - fatG * 9) / 4))
-  return { proteinG, fatG, carbsG }
+
+  // ابحث عن أقرب توزيعة تحقق المجموع بدقة:
+  // الأولوية للبروتين المحسوب (dp=0)، ثم أقرب نسبة دهون لـ 27%
+  const fatIdeal = Math.round(target * 0.27 / 9)
+  for (let dp = 0; dp <= 12; dp++) {
+    const pCands = dp === 0 ? [proteinG] : [proteinG - dp, proteinG + dp]
+    for (const p of pCands) {
+      if (p < 0) continue
+      const r = target - p * 4
+      if (r < 0) continue
+      const fMax = Math.floor(r / 9)
+      const f0 = Math.min(fatIdeal, fMax)
+      const dfMax = Math.max(f0, fMax - f0)
+      for (let df = 0; df <= dfMax; df++) {
+        const fCands = df === 0 ? [f0] : [f0 - df, f0 + df]
+        for (const f of fCands) {
+          if (f < 0 || f > fMax) continue
+          const rem = r - f * 9
+          if (rem % 4 === 0) return { proteinG: p, fatG: f, carbsG: rem / 4 }
+        }
+      }
+    }
+  }
+  // احتياطي لمدخلات متناقضة قصوى (بروتين مستحيل): انزل بالبروتين حتى توجد حل دقيق
+  for (let p = Math.min(proteinG, Math.floor(target / 4)); p >= Math.max(0, Math.floor(target / 4) - 40); p--) {
+    const r = target - p * 4
+    for (let f = 0; f <= Math.min(12, Math.floor(r / 9)); f++) {
+      if ((r - f * 9) % 4 === 0) return { proteinG: p, fatG: f, carbsG: (r - f * 9) / 4 }
+    }
+  }
+  const fitProteinG = Math.max(0, Math.floor(target / 4))
+  return { proteinG: fitProteinG, fatG: 0, carbsG: 0 }
 }
 
 export function calcAll({ weightKg, heightCm, age, gender, bodyFatPct, activityId }) {
@@ -70,5 +110,10 @@ export function calcAll({ weightKg, heightCm, age, gender, bodyFatPct, activityI
       katch: tdeeKatch != null ? Math.round(tdeeKatch) : null,
     },
     activityFactor: factor,
+    // قيم دقيقة غير مقربة — تُستخدم لحساب الهدف والماكروز (بدون تقريب مزدوج)
+    precise: {
+      bmr: { mifflin: bmrMifflin, harris: bmrHarris, katch: bmrKatch },
+      tdee: { mifflin: tdeeMifflin, harris: tdeeHarris, katch: tdeeKatch },
+    },
   }
 }

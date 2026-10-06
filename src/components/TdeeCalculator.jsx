@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Icon, { IconBadge } from './icons'
-import { ACTIVITY_LEVELS, GOALS, calcAll, calcMacros, targetCalories } from '../lib/tdee'
+import { ACTIVITY_LEVELS, GOALS, calcAll, calcMacros, safeTargetCalories } from '../lib/tdee'
 import { saveResult } from '../services/leads'
 
 const inputCls =
@@ -36,8 +36,12 @@ export default function TdeeCalculator({ onCalculated }) {
     setError('')
 
     const calc = calcAll({ weightKg, heightCm, age, gender: form.gender, bodyFatPct, activityId: form.activityId })
-    const tdeeBase = calc.tdee.mifflin
-    const target = targetCalories(tdeeBase, form.goalId)
+    // الهدف يُحسب من القيمة الدقيقة (بدون تقريب مزدوج) مع حد أدنى آمن للتنشيف
+    const { target, capped, floor } = safeTargetCalories(
+      calc.precise.tdee.mifflin,
+      form.goalId,
+      calc.precise.bmr.mifflin,
+    )
     const macros = calcMacros(target, weightKg, form.goalId)
     const goalLabel = GOALS.find((g) => g.id === form.goalId)?.label ?? ''
     const activityLabel = ACTIVITY_LEVELS.find((a) => a.id === form.activityId)?.label ?? ''
@@ -57,6 +61,8 @@ export default function TdeeCalculator({ onCalculated }) {
       tdeeHarris: calc.tdee.harris,
       tdeeKatch: calc.tdee.katch,
       targetCalories: target,
+      targetCapped: capped,
+      targetFloor: floor,
       macros,
     }
     saveResult(result)
